@@ -1,0 +1,5 @@
+# This file keeps the assets directory in git
+# Place your assets files in subdirectories:
+# - images/ : for image files (png, jpg, etc.)
+# - json/ : for JSON configuration files
+# - fonts/ : for custom font files
