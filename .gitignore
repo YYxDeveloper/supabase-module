@@ -169,3 +169,4 @@ app.*.symbols
 .env.local
 .env.*.local
 *.lock
+.env
