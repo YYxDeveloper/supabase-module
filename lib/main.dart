@@ -91,6 +91,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String? _statusMessage;
   String? _userEmail;
+  String? _userId;
+  String? _userName;
+  String? _userAvatarUrl;
+  String? _userPhone;
+  String? _userCreatedAt;
+  String? _userLastSignInAt;
+  Map<String, dynamic>? _userMetadata;
   bool _isLoading = false;
 
   @override
@@ -111,6 +118,13 @@ class _MyHomePageState extends State<MyHomePage> {
     if (user != null) {
       setState(() {
         _userEmail = user.email;
+        _userId = user.id;
+        _userName = user.userMetadata?['name'] ?? user.userMetadata?['full_name'];
+        _userAvatarUrl = user.userMetadata?['avatar_url'] ?? user.userMetadata?['picture'];
+        _userPhone = user.phone;
+        _userCreatedAt = user.createdAt;
+        _userLastSignInAt = user.lastSignInAt;
+        _userMetadata = user.userMetadata;
         _statusMessage = '已登入';
       });
     }
@@ -136,9 +150,20 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
       // 更新 UI 顯示成功訊息
+      final currentUser = Supabase.instance.client.auth.currentUser;
       setState(() {
         _statusMessage = 'Google Sign-In successful!';
-        _userEmail = Supabase.instance.client.auth.currentUser?.email;
+        _userEmail = currentUser?.email;
+        _userId = currentUser?.id;
+        _userName = currentUser?.userMetadata?['name'] ?? 
+                   currentUser?.userMetadata?['full_name'] ??
+                   currentUser?.userMetadata?['email'];
+        _userAvatarUrl = currentUser?.userMetadata?['avatar_url'] ?? 
+                        currentUser?.userMetadata?['picture'];
+        _userPhone = currentUser?.phone;
+        _userCreatedAt = currentUser?.createdAt;
+        _userLastSignInAt = currentUser?.lastSignInAt;
+        _userMetadata = currentUser?.userMetadata;
         _isLoading = false;
       });
 
@@ -148,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SnackBar(
             content: Text('Google 登入成功！'),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
+            duration: Duration(seconds: 12),
           ),
         );
       }
@@ -164,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SnackBar(
             content: Text('登入失敗: $e'),
             backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 13),
           ),
         );
       }
@@ -336,6 +361,13 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _statusMessage = null;
         _userEmail = null;
+        _userId = null;
+        _userName = null;
+        _userAvatarUrl = null;
+        _userPhone = null;
+        _userCreatedAt = null;
+        _userLastSignInAt = null;
+        _userMetadata = null;
       });
 
       if (mounted) {
@@ -382,11 +414,29 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (_userEmail != null) ...[
-                const Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 64,
-                ),
+                // 用戶頭像
+                if (_userAvatarUrl != null)
+                  ClipOval(
+                    child: Image.network(
+                      _userAvatarUrl!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.account_circle,
+                          size: 80,
+                          color: Colors.green,
+                        );
+                      },
+                    ),
+                  )
+                else
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 64,
+                  ),
                 const SizedBox(height: 16),
                 Text(
                   '已登入',
@@ -395,11 +445,81 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'User: $_userEmail',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                const SizedBox(height: 24),
+                // 用戶資訊卡片
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_userName != null) ...[
+                        _buildInfoRow('姓名', _userName!),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_userEmail != null) ...[
+                        _buildInfoRow('電子郵件', _userEmail!),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_userId != null) ...[
+                        _buildInfoRow('用戶 ID', _userId!),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_userPhone != null) ...[
+                        _buildInfoRow('電話', _userPhone!),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_userCreatedAt != null) ...[
+                        _buildInfoRow(
+                          '建立時間',
+                          _formatDateTimeString(_userCreatedAt!),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_userLastSignInAt != null) ...[
+                        _buildInfoRow(
+                          '最後登入',
+                          _formatDateTimeString(_userLastSignInAt!),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_userMetadata != null && _userMetadata!.isNotEmpty) ...[
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        Text(
+                          '其他資訊',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ..._userMetadata!.entries.map((entry) {
+                          if (entry.value != null &&
+                              entry.key != 'name' &&
+                              entry.key != 'full_name' &&
+                              entry.key != 'avatar_url' &&
+                              entry.key != 'picture' &&
+                              entry.key != 'email') {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: _buildInfoRow(
+                                entry.key,
+                                entry.value.toString(),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }).toList(),
+                      ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 32),
               ] else ...[
@@ -425,14 +545,30 @@ class _MyHomePageState extends State<MyHomePage> {
                           : Colors.orange.shade200,
                     ),
                   ),
-                  child: Text(
-                    _statusMessage!,
-                    style: TextStyle(
-                      color: _userEmail != null
-                          ? Colors.green.shade900
-                          : Colors.orange.shade900,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '狀態',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _userEmail != null
+                              ? Colors.green.shade700
+                              : Colors.orange.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _statusMessage!,
+                        style: TextStyle(
+                          color: _userEmail != null
+                              ? Colors.green.shade900
+                              : Colors.orange.shade900,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -461,5 +597,46 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            '$label:',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDateTimeString(String dateTimeString) {
+    try {
+      final dateTime = DateTime.parse(dateTimeString);
+      return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} '
+          '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
+    } catch (e) {
+      // 如果解析失敗，返回原始字串
+      return dateTimeString;
+    }
   }
 }
