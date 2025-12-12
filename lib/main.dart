@@ -99,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _userLastSignInAt;
   Map<String, dynamic>? _userMetadata;
   bool _isLoading = false;
+  bool _isAppleSignInLoading = false;
 
   @override
   void initState() {
@@ -354,6 +355,62 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _signInWithApple() async {
+    setState(() {
+      _isAppleSignInLoading = true;
+      _statusMessage = '正在啟動 Apple 登入...';
+    });
+
+    try {
+      developer.log(
+        '開始 Apple Sign-In 流程',
+        name: 'AppleSignIn',
+      );
+
+      // TODO: 實作 Apple Sign-In
+      // 這裡需要添加 Apple Sign-In 的實作
+      // 例如使用 sign_in_with_apple 套件或 Supabase 的 Apple OAuth
+      
+      // 暫時顯示提示訊息
+      setState(() {
+        _isAppleSignInLoading = false;
+        _statusMessage = 'Apple Sign-In 功能準備中...';
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Apple Sign-In 功能準備中，敬請期待'),
+            backgroundColor: Colors.blue,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e, stackTrace) {
+      developer.log(
+        'Apple Sign-In 錯誤',
+        name: 'AppleSignIn',
+        error: e,
+        stackTrace: stackTrace,
+      );
+
+      setState(() {
+        _isAppleSignInLoading = false;
+        _statusMessage = 'Apple 登入失敗: $e';
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Apple 登入失敗: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _signOut() async {
     try {
       await GoogleSignIn.instance.signOut();
@@ -368,6 +425,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _userCreatedAt = null;
         _userLastSignInAt = null;
         _userMetadata = null;
+        _isAppleSignInLoading = false;
       });
 
       if (mounted) {
@@ -573,7 +631,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
               ElevatedButton.icon(
-                onPressed: _isLoading ? null : _signIn,
+                onPressed: (_isLoading || _isAppleSignInLoading) ? null : _signIn,
                 icon: _isLoading
                     ? const SizedBox(
                         width: 16,
@@ -586,6 +644,29 @@ class _MyHomePageState extends State<MyHomePage> {
                     : const Icon(Icons.login),
                 label: Text(_isLoading ? '處理中...' : 'Sign in with Google'),
                 style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: (_isLoading || _isAppleSignInLoading) ? null : _signInWithApple,
+                icon: _isAppleSignInLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Icon(Icons.apple, color: Colors.white),
+                label: Text(_isAppleSignInLoading ? '處理中...' : 'Sign in with Apple'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
