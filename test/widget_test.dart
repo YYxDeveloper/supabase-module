@@ -1,64 +1,30 @@
-// Google Sign-In App Widget Test
+// This is a basic Flutter widget test.
 //
-// 注意：此測試需要完整的環境設定（.env 檔案和平台特定實作）
-// 在測試環境中，某些平台特定的功能（如 Google Sign-In）可能無法完全初始化
-// 建議使用整合測試或手動測試來驗證完整功能
+// To perform an interaction with a widget in your test, use the WidgetTester
+// utility in the flutter_test package. For example, you can send tap and scroll
+// gestures. You can also use WidgetTester to find child widgets in the widget
+// tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:subabase_park/main.dart';
+
 void main() {
-  testWidgets('基本 Widget 測試範例', (WidgetTester tester) async {
-    // 測試基本的 Material App 結構
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('測試標題'),
-          ),
-          body: const Center(
-            child: Text('測試內容'),
-          ),
-        ),
-      ),
-    );
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
 
-    // 驗證 AppBar 存在
-    expect(find.byType(AppBar), findsOneWidget);
-    
-    // 驗證標題文字
-    expect(find.text('測試標題'), findsOneWidget);
-    
-    // 驗證內容文字
-    expect(find.text('測試內容'), findsOneWidget);
-  });
+    // Verify that our counter starts at 0.
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
 
-  testWidgets('按鈕互動測試範例', (WidgetTester tester) async {
-    int counter = 0;
-    
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: ElevatedButton(
-              onPressed: () {
-                counter++;
-              },
-              child: const Text('點擊我'),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    // 驗證按鈕存在
-    expect(find.text('點擊我'), findsOneWidget);
-    
-    // 點擊按鈕
-    await tester.tap(find.text('點擊我'));
+    // Tap the '+' icon and trigger a frame.
+    await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
-    
-    // 驗證計數器增加
-    expect(counter, equals(1));
+
+    // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
   });
 }
