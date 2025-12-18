@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -356,6 +357,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _signInWithApple() async {
+    // Apple Sign-In 僅在 iOS 和 macOS 上可用
+    if (!Platform.isIOS && !Platform.isMacOS) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Apple Sign-In 僅在 iOS 和 macOS 上可用'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() {
       _isAppleSignInLoading = true;
       _statusMessage = '正在啟動 Apple 登入...';
@@ -367,28 +382,122 @@ class _MyHomePageState extends State<MyHomePage> {
         name: 'AppleSignIn',
       );
 
-      // TODO: 實作 Apple Sign-In
-      // 這裡需要添加 Apple Sign-In 的實作
-      // 例如使用 sign_in_with_apple 套件或 Supabase 的 Apple OAuth
-      
-      // 暫時顯示提示訊息
+      // 使用 sign_in_with_apple 套件進行 Apple 登入
+      // 
+      // 注意：sign_in_with_apple 套件在 iOS 上預設使用 Bundle ID 作為 ID token 的 audience
+      // Bundle ID: com.example.subabasePark
+      // 
+      // 重要：Supabase Dashboard 中的 Services ID 必須與 Bundle ID 一致
+      // 如果 Supabase 設定的是 Services ID (com.example.subabasePark.auth)，
+      // 請在 Supabase Dashboard 中將 Services ID 改為 Bundle ID (com.example.subabasePark)
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      developer.log(
+        'Apple Sign-In 認證成功，取得 credential',
+        name: 'AppleSignIn',
+      );
+
+      // 檢查是否有 ID Token
+      if (credential.identityToken == null) {
+        throw '無法取得 Apple ID Token';
+      }
+
+      // 使用 Supabase 進行登入
+      await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: credential.identityToken!,
+      );
+
+      developer.log(
+        'Supabase Apple Sign-In 成功',
+        name: 'AppleSignIn',
+      );
+
+      // 更新 UI 顯示成功訊息
+      final currentUser = Supabase.instance.client.auth.currentUser;
+      setState(() {
+        _statusMessage = 'Apple Sign-In 成功！';
+        _userEmail = currentUser?.email ?? credential.email;
+        _userId = currentUser?.id;
+        // Apple 可能不會提供姓名，使用 credential 中的資訊
+        _userName = credential.givenName != null && credential.familyName != null
+            ? '${credential.givenName} ${credential.familyName}'
+            : currentUser?.userMetadata?['full_name'] ??
+                currentUser?.userMetadata?['name'] ??
+                credential.email;
+        _userAvatarUrl = currentUser?.userMetadata?['avatar_url'];
+        _userPhone = currentUser?.phone;
+        _userCreatedAt = currentUser?.createdAt;
+        _userLastSignInAt = currentUser?.lastSignInAt;
+        _userMetadata = currentUser?.userMetadata;
+        _isAppleSignInLoading = false;
+      });
+
+      // 顯示成功 SnackBar
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Apple 登入成功！'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } on SignInWithAppleAuthorizationException catch (e, stackTrace) {
+      developer.log(
+        'Apple Sign-In 授權錯誤',
+        name: 'AppleSignIn',
+        error: e,
+        stackTrace: stackTrace,
+      );
+
+      String errorMessage = 'Apple 登入失敗';
+      Color backgroundColor = Colors.red;
+
+      switch (e.code) {
+        case AuthorizationErrorCode.canceled:
+          errorMessage = '登入已取消';
+          backgroundColor = Colors.orange;
+          break;
+        case AuthorizationErrorCode.failed:
+          errorMessage = '登入失敗：${e.message ?? "未知錯誤"}';
+          break;
+        case AuthorizationErrorCode.invalidResponse:
+          errorMessage = '無效的回應：${e.message ?? "未知錯誤"}';
+          break;
+        case AuthorizationErrorCode.notHandled:
+          errorMessage = '無法處理登入請求：${e.message ?? "未知錯誤"}';
+          break;
+        case AuthorizationErrorCode.notInteractive:
+          errorMessage = '登入請求無法以互動方式完成：${e.message ?? "未知錯誤"}';
+          break;
+        case AuthorizationErrorCode.unknown:
+          errorMessage = '未知錯誤：${e.message ?? "未知錯誤"}';
+          break;
+      }
+
       setState(() {
         _isAppleSignInLoading = false;
-        _statusMessage = 'Apple Sign-In 功能準備中...';
+        _statusMessage = errorMessage;
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Apple Sign-In 功能準備中，敬請期待'),
-            backgroundColor: Colors.blue,
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: backgroundColor,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
     } catch (e, stackTrace) {
       developer.log(
-        'Apple Sign-In 錯誤',
+        'Apple Sign-In 未預期的錯誤',
         name: 'AppleSignIn',
         error: e,
         stackTrace: stackTrace,
