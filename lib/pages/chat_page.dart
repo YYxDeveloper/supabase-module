@@ -8,3 +8,4 @@ class ChatPage extends StatelessWidget {
     return const Scaffold(body: SizedBox.shrink());
   }
 }
+
