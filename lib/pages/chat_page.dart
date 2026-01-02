@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:chat_package/chat_package.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SizedBox.shrink());
+    return Scaffold(
+      appBar: AppBar(title: const Text('聊天')),
+      body: const RoomsPage(),
+    );
   }
 }
-
