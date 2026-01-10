@@ -170,3 +170,4 @@ app.*.symbols
 .env.*.local
 *.lock
 .env
+.metadata
