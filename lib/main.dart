@@ -79,9 +79,27 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: const [
         Locale('zh', 'TW'), // 繁體中文
-        Locale('en', 'US'), // 英文（備用）
+        Locale('en', 'US'), // 英文
       ],
-      locale: const Locale('zh', 'TW'), // 預設使用繁體中文
+      // 根據系統語系自動選擇語言：繁體中文使用繁體中文，其他一律使用英文
+      localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
+        if (locale == null) {
+          return const Locale('en', 'US'); // 如果無法取得系統語系，預設使用英文
+        }
+
+        // 檢查是否為繁體中文（台灣或香港）
+        if (locale.languageCode == 'zh') {
+          // 台灣或香港使用繁體中文
+          if (locale.countryCode == 'TW' || locale.countryCode == 'HK') {
+            return const Locale('zh', 'TW');
+          }
+          // 其他中文變體（簡體中文等）使用英文
+          return const Locale('en', 'US');
+        }
+
+        // 非繁體中文語系一律使用英文
+        return const Locale('en', 'US');
+      },
       home: const MainNavigationPage(),
     );
   }
