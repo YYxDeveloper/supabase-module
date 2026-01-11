@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:auth_package/auth_package.dart';
 
 void main() {
@@ -7,6 +8,7 @@ void main() {
     testWidgets('系統語系為繁體中文（台灣）時應使用繁體中文', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('zh', 'TW'),
           localizationsDelegates: const [
             AppLocalizationsDelegate(),
             GlobalMaterialLocalizations.delegate,
@@ -14,46 +16,20 @@ void main() {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [Locale('zh', 'TW'), Locale('en', 'US')],
-          localeResolutionCallback:
-              (Locale? locale, Iterable<Locale> supportedLocales) {
-                if (locale == null) {
-                  return const Locale('en', 'US');
-                }
-
-                if (locale.languageCode == 'zh') {
-                  if (locale.countryCode == 'TW' ||
-                      locale.countryCode == 'HK') {
-                    return const Locale('zh', 'TW');
-                  }
-                  return const Locale('en', 'US');
-                }
-
-                return const Locale('en', 'US');
-              },
           home: Builder(
             builder: (context) {
               final localizations = AppLocalizations.of(context);
               // 使用系統語系為繁體中文（台灣）
-              return MaterialApp(
-                locale: const Locale('zh', 'TW'),
-                localizationsDelegates: const [
-                  AppLocalizationsDelegate(),
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: const [
-                  Locale('zh', 'TW'),
-                  Locale('en', 'US'),
-                ],
-                home: Scaffold(body: Text(localizations.loginButton)),
-              );
+              return Scaffold(body: Text(localizations.loginButton));
             },
           ),
         ),
       );
 
+      // 等待本地化加載完成
       await tester.pump();
+      await tester.pump();
+      
       // 驗證顯示繁體中文
       expect(find.text('登入'), findsOneWidget);
     });
@@ -94,6 +70,8 @@ void main() {
         ),
       );
 
+      // 等待本地化加載完成
+      await tester.pump();
       await tester.pump();
       // 驗證顯示繁體中文
       expect(find.text('登入'), findsOneWidget);
@@ -135,6 +113,8 @@ void main() {
         ),
       );
 
+      // 等待本地化加載完成
+      await tester.pump();
       await tester.pump();
       // 驗證顯示英文
       expect(find.text('Login'), findsOneWidget);
@@ -176,6 +156,8 @@ void main() {
         ),
       );
 
+      // 等待本地化加載完成
+      await tester.pump();
       await tester.pump();
       // 驗證顯示英文
       expect(find.text('Login'), findsOneWidget);
@@ -217,6 +199,8 @@ void main() {
         ),
       );
 
+      // 等待本地化加載完成
+      await tester.pump();
       await tester.pump();
       // 驗證顯示英文
       expect(find.text('Login'), findsOneWidget);
