@@ -7,6 +7,6 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: const AuthScreen());
+    return Scaffold(body: const SocialAuthScreen());
   }
 }
