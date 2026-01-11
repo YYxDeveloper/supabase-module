@@ -13,24 +13,23 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('zh', 'TW'),
-            Locale('en', 'US'),
-          ],
-          localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
-            if (locale == null) {
-              return const Locale('en', 'US');
-            }
+          supportedLocales: const [Locale('zh', 'TW'), Locale('en', 'US')],
+          localeResolutionCallback:
+              (Locale? locale, Iterable<Locale> supportedLocales) {
+                if (locale == null) {
+                  return const Locale('en', 'US');
+                }
 
-            if (locale.languageCode == 'zh') {
-              if (locale.countryCode == 'TW' || locale.countryCode == 'HK') {
-                return const Locale('zh', 'TW');
-              }
-              return const Locale('en', 'US');
-            }
+                if (locale.languageCode == 'zh') {
+                  if (locale.countryCode == 'TW' ||
+                      locale.countryCode == 'HK') {
+                    return const Locale('zh', 'TW');
+                  }
+                  return const Locale('en', 'US');
+                }
 
-            return const Locale('en', 'US');
-          },
+                return const Locale('en', 'US');
+              },
           home: Builder(
             builder: (context) {
               final localizations = AppLocalizations.of(context);
@@ -47,9 +46,7 @@ void main() {
                   Locale('zh', 'TW'),
                   Locale('en', 'US'),
                 ],
-                home: Scaffold(
-                  body: Text(localizations.loginButton),
-                ),
+                home: Scaffold(body: Text(localizations.loginButton)),
               );
             },
           ),
@@ -71,30 +68,27 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('zh', 'TW'),
-            Locale('en', 'US'),
-          ],
-          localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
-            if (locale == null) {
-              return const Locale('en', 'US');
-            }
+          supportedLocales: const [Locale('zh', 'TW'), Locale('en', 'US')],
+          localeResolutionCallback:
+              (Locale? locale, Iterable<Locale> supportedLocales) {
+                if (locale == null) {
+                  return const Locale('en', 'US');
+                }
 
-            if (locale.languageCode == 'zh') {
-              if (locale.countryCode == 'TW' || locale.countryCode == 'HK') {
-                return const Locale('zh', 'TW');
-              }
-              return const Locale('en', 'US');
-            }
+                if (locale.languageCode == 'zh') {
+                  if (locale.countryCode == 'TW' ||
+                      locale.countryCode == 'HK') {
+                    return const Locale('zh', 'TW');
+                  }
+                  return const Locale('en', 'US');
+                }
 
-            return const Locale('en', 'US');
-          },
+                return const Locale('en', 'US');
+              },
           home: Builder(
             builder: (context) {
               final localizations = AppLocalizations.of(context);
-              return Scaffold(
-                body: Text(localizations.loginButton),
-              );
+              return Scaffold(body: Text(localizations.loginButton));
             },
           ),
         ),
@@ -115,30 +109,27 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('zh', 'TW'),
-            Locale('en', 'US'),
-          ],
-          localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
-            if (locale == null) {
-              return const Locale('en', 'US');
-            }
+          supportedLocales: const [Locale('zh', 'TW'), Locale('en', 'US')],
+          localeResolutionCallback:
+              (Locale? locale, Iterable<Locale> supportedLocales) {
+                if (locale == null) {
+                  return const Locale('en', 'US');
+                }
 
-            if (locale.languageCode == 'zh') {
-              if (locale.countryCode == 'TW' || locale.countryCode == 'HK') {
-                return const Locale('zh', 'TW');
-              }
-              return const Locale('en', 'US');
-            }
+                if (locale.languageCode == 'zh') {
+                  if (locale.countryCode == 'TW' ||
+                      locale.countryCode == 'HK') {
+                    return const Locale('zh', 'TW');
+                  }
+                  return const Locale('en', 'US');
+                }
 
-            return const Locale('en', 'US');
-          },
+                return const Locale('en', 'US');
+              },
           home: Builder(
             builder: (context) {
               final localizations = AppLocalizations.of(context);
-              return Scaffold(
-                body: Text(localizations.loginButton),
-              );
+              return Scaffold(body: Text(localizations.loginButton));
             },
           ),
         ),
@@ -159,30 +150,27 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('zh', 'TW'),
-            Locale('en', 'US'),
-          ],
-          localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
-            if (locale == null) {
-              return const Locale('en', 'US');
-            }
+          supportedLocales: const [Locale('zh', 'TW'), Locale('en', 'US')],
+          localeResolutionCallback:
+              (Locale? locale, Iterable<Locale> supportedLocales) {
+                if (locale == null) {
+                  return const Locale('en', 'US');
+                }
 
-            if (locale.languageCode == 'zh') {
-              if (locale.countryCode == 'TW' || locale.countryCode == 'HK') {
-                return const Locale('zh', 'TW');
-              }
-              return const Locale('en', 'US');
-            }
+                if (locale.languageCode == 'zh') {
+                  if (locale.countryCode == 'TW' ||
+                      locale.countryCode == 'HK') {
+                    return const Locale('zh', 'TW');
+                  }
+                  return const Locale('en', 'US');
+                }
 
-            return const Locale('en', 'US');
-          },
+                return const Locale('en', 'US');
+              },
           home: Builder(
             builder: (context) {
               final localizations = AppLocalizations.of(context);
-              return Scaffold(
-                body: Text(localizations.loginButton),
-              );
+              return Scaffold(body: Text(localizations.loginButton));
             },
           ),
         ),
@@ -203,30 +191,27 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('zh', 'TW'),
-            Locale('en', 'US'),
-          ],
-          localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
-            if (locale == null) {
-              return const Locale('en', 'US');
-            }
+          supportedLocales: const [Locale('zh', 'TW'), Locale('en', 'US')],
+          localeResolutionCallback:
+              (Locale? locale, Iterable<Locale> supportedLocales) {
+                if (locale == null) {
+                  return const Locale('en', 'US');
+                }
 
-            if (locale.languageCode == 'zh') {
-              if (locale.countryCode == 'TW' || locale.countryCode == 'HK') {
-                return const Locale('zh', 'TW');
-              }
-              return const Locale('en', 'US');
-            }
+                if (locale.languageCode == 'zh') {
+                  if (locale.countryCode == 'TW' ||
+                      locale.countryCode == 'HK') {
+                    return const Locale('zh', 'TW');
+                  }
+                  return const Locale('en', 'US');
+                }
 
-            return const Locale('en', 'US');
-          },
+                return const Locale('en', 'US');
+              },
           home: Builder(
             builder: (context) {
               final localizations = AppLocalizations.of(context);
-              return Scaffold(
-                body: Text(localizations.loginButton),
-              );
+              return Scaffold(body: Text(localizations.loginButton));
             },
           ),
         ),
