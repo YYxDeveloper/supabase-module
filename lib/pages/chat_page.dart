@@ -7,9 +7,6 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('聊天')),
-      body: const AuthScreen(),
-    );
+    return Scaffold(body: const AuthScreen());
   }
 }
