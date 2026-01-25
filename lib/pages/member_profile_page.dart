@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart' as apple;
 
 class MemberProfilePage extends StatefulWidget {
   const MemberProfilePage({super.key});
@@ -312,10 +312,10 @@ class _MemberProfilePageState extends State<MemberProfilePage> {
       // 重要：Supabase Dashboard 中的 Services ID 必須與 Bundle ID 一致
       // 如果 Supabase 設定的是 Services ID (com.example.subabasePark.auth)，
       // 請在 Supabase Dashboard 中將 Services ID 改為 Bundle ID (com.example.subabasePark)
-      final credential = await SignInWithApple.getAppleIDCredential(
+      final credential = await apple.SignInWithApple.getAppleIDCredential(
         scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
+          apple.AppleIDAuthorizationScopes.email,
+          apple.AppleIDAuthorizationScopes.fullName,
         ],
       );
 
@@ -365,7 +365,7 @@ class _MemberProfilePageState extends State<MemberProfilePage> {
           ),
         );
       }
-    } on SignInWithAppleAuthorizationException catch (e, stackTrace) {
+    } on apple.SignInWithAppleAuthorizationException catch (e, stackTrace) {
       developer.log(
         'Apple Sign-In 授權錯誤',
         name: 'AppleSignIn',
@@ -377,23 +377,23 @@ class _MemberProfilePageState extends State<MemberProfilePage> {
       Color backgroundColor = Colors.red;
 
       switch (e.code) {
-        case AuthorizationErrorCode.canceled:
+        case apple.AuthorizationErrorCode.canceled:
           errorMessage = '登入已取消';
           backgroundColor = Colors.orange;
           break;
-        case AuthorizationErrorCode.failed:
+        case apple.AuthorizationErrorCode.failed:
           errorMessage = '登入失敗：${e.message ?? "未知錯誤"}';
           break;
-        case AuthorizationErrorCode.invalidResponse:
+        case apple.AuthorizationErrorCode.invalidResponse:
           errorMessage = '無效的回應：${e.message ?? "未知錯誤"}';
           break;
-        case AuthorizationErrorCode.notHandled:
+        case apple.AuthorizationErrorCode.notHandled:
           errorMessage = '無法處理登入請求：${e.message ?? "未知錯誤"}';
           break;
-        case AuthorizationErrorCode.notInteractive:
+        case apple.AuthorizationErrorCode.notInteractive:
           errorMessage = '登入請求無法以互動方式完成：${e.message ?? "未知錯誤"}';
           break;
-        case AuthorizationErrorCode.unknown:
+        case apple.AuthorizationErrorCode.unknown:
           errorMessage = '未知錯誤：${e.message ?? "未知錯誤"}';
           break;
       }

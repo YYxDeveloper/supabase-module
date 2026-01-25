@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'chat_page.dart';
+import 'package:chat_package/chat_package.dart';
 import 'member_profile_page.dart';
 import 'more_page.dart';
 
@@ -14,7 +14,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = const [
-    ChatPage(),
+    RoomsPage(),
     MemberProfilePage(),
     MorePage(),
   ];
